@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách tuyến bus</title>
+    <style>
+        body{font-family: Arial, sans-serif; margin:20px}
+        table{border-collapse: collapse; width:100%}
+        th,td{border:1px solid #ddd; padding:8px}
+        th{background:#f4f4f4}
+        .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+        .actions a, .actions form{display:inline-block;margin-right:6px}
+        .btn{padding:6px 10px;text-decoration:none;border:1px solid #ccc;border-radius:4px}
+        .btn.primary{background:#0d6efd;color:white;border-color:#0d6efd}
+        .btn.danger{background:#dc3545;color:white;border-color:#dc3545}
+        .muted{color:#666}
+    </style>
+</head>
+<body>
+<div class="top">
+    <div>
+        <strong th:text="${username}">user</strong>
+        <span class="muted" th:text="${roles}">(roles)</span>
+    </div>
+    <div>
+        <form th:action="@{/logout}" method="post" style="display:inline">
+            <button class="btn" type="submit">Logout</button>
+        </form>
+        <a class="btn" th:href="@{/busroutes}">Refresh</a>
+        <a class="btn primary" th:href="@{/admin/busroutes/new}" sec:authorize="hasRole('ADMIN')">Thêm tuyến</a>
+    </div>
+  </div>
+
+  <form th:action="@{/busroutes}" method="get" style="margin-bottom: 12px;">
+      <input type="text" name="name" placeholder="Tìm theo tên..." th:value="${search}">
+      <button class="btn" type="submit">Tìm</button>
+  </form>
+
+  <table>
+      <thead>
+      <tr>
+          <th>ID</th>
+          <th>Tên tuyến</th>
+          <th>Điểm đầu</th>
+          <th>Điểm cuối</th>
+          <th>Giá vé</th>
+          <th>Ưu tiên</th>
+          <th>Số trạm</th>
+          <th>Thao tác</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="r : ${routes}">
+          <td th:text="${r.id}">1</td>
+          <td>
+              <a th:href="@{'/busroutes/' + ${r.id}}" th:text="${r.name}">Tên</a>
+          </td>
+          <td th:text="${r.startPoint}">Start</td>
+          <td th:text="${r.endPoint}">End</td>
+          <td th:text="${#numbers.formatDecimal(r.price, 1, 'COMMA', 2, 'POINT')}">0</td>
+          <td th:text="${r.priority}">0</td>
+          <td th:text="${r.stationNo}">0</td>
+          <td class="actions">
+              <a class="btn" th:href="@{'/busroutes/' + ${r.id}}">Chi tiết</a>
+              <a class="btn" th:href="@{'/admin/busroutes/' + ${r.id} + '/edit'}" sec:authorize="hasRole('ADMIN')">Sửa</a>
+              <form th:action="@{'/admin/busroutes/' + ${r.id} + '/delete'}" method="post" sec:authorize="hasRole('ADMIN')" onsubmit="return confirm('Xóa tuyến này?')">
+                  <button class="btn danger" type="submit">Xóa</button>
+              </form>
+          </td>
+      </tr>
+      <tr th:if="${routes == null or #lists.isEmpty(routes)}">
+          <td colspan="8" class="muted">Không có tuyến nào.</td>
+      </tr>
+      </tbody>
+  </table>
+</body>
+</html>
+

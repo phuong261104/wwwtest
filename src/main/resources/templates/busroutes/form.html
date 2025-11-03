@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${mode} == 'edit' ? 'Sửa tuyến' : 'Thêm tuyến'">Tuyến bus</title>
+    <style>
+        body{font-family: Arial, sans-serif; margin:20px}
+        label{display:block;margin-top:10px}
+        input{width:100%;padding:8px;border:1px solid #ddd;border-radius:4px}
+        .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+        .actions{margin-top:16px}
+        button, a.btn{padding:8px 12px;border:1px solid #ccc;border-radius:4px;text-decoration:none}
+        button.primary{background:#0d6efd;border-color:#0d6efd;color:#fff}
+    </style>
+</head>
+<body>
+<h2 th:text="${mode} == 'edit' ? 'Sửa tuyến' : 'Thêm tuyến'">Tuyến</h2>
+
+<form th:object="${route}"
+      th:action="${mode} == 'edit' ? @{'/admin/busroutes/' + ${route.id}} : @{/admin/busroutes}"
+      method="post">
+
+    <div class="row">
+        <div>
+            <label>Tên tuyến</label>
+            <input type="text" th:field="*{name}" required>
+        </div>
+        <div>
+            <label>Giá vé</label>
+            <input type="number" step="0.01" min="0" th:field="*{price}" required>
+        </div>
+        <div>
+            <label>Điểm đầu</label>
+            <input type="text" th:field="*{startPoint}" required>
+        </div>
+        <div>
+            <label>Điểm cuối</label>
+            <input type="text" th:field="*{endPoint}" required>
+        </div>
+        <div>
+            <label>Ưu tiên</label>
+            <input type="number" min="0" th:field="*{priority}">
+        </div>
+        <div>
+            <label>Số trạm</label>
+            <input type="number" min="0" th:field="*{stationNo}">
+        </div>
+    </div>
+
+    <div class="actions">
+        <button class="primary" type="submit" th:text="${mode} == 'edit' ? 'Cập nhật' : 'Thêm mới'">Lưu</button>
+        <a class="btn" th:href="@{/busroutes}">Hủy</a>
+    </div>
+</form>
+
+</body>
+</html>
+
